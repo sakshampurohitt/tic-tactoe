@@ -1,17 +1,61 @@
 let boxes = document.querySelectorAll(".box");
 let reset = document.querySelector("#reset");
 let turn0 = true;
-const winnpat = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
-boxes.forEach((box, index) => {
+const winnpat = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
+];
+
+boxes.forEach((box) => {
     box.addEventListener("click", () => {
         if (box.innerText === "") {
             box.innerText = turn0 ? "O" : "X";
             turn0 = !turn0;
-            
-            if (!checkWin() && checkDraw()) {
+            if (checkWinner()) {
+                disablebtn();
+            } else if (checkDraw()) {
                 alert("It's a draw!");
                 resetGame();
             }
         }
     });
 });
+
+const enablebtn = () => {
+    boxes.forEach(box => {
+        box.disabled = false;
+        box.innerText = "";
+    });
+}
+
+const resetGame = () => {
+    turn0 = true;
+    enablebtn();
+}
+
+const disablebtn = () => {
+    boxes.forEach(box => {
+        box.disabled = true;
+    });
+}
+
+const checkWinner = () => {
+    for (let pattern of winnpat) {
+        let pos1 = boxes[pattern[0]].innerText;
+        let pos2 = boxes[pattern[1]].innerText;
+        let pos3 = boxes[pattern[2]].innerText;
+
+        if (pos1 !== "" && pos1 === pos2 && pos2 === pos3) {
+            alert(`${pos1} wins!`);
+            return true;
+        }
+    }
+    return false;
+};
+
+const checkDraw = () => {
+    return [...boxes].every(box => box.innerText !== "");
+};
+
+reset.addEventListener("click", resetGame);
